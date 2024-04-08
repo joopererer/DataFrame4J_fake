@@ -11,7 +11,7 @@ public class CSVReader {
     static final String SEPARATEUR = ",";
     private final String csvFile;
     private String[] columns;
-    private List<List<?>> data;
+    private List<List> data;
     private List<Class<?>> types;
 
     public CSVReader(String file) {
@@ -53,7 +53,7 @@ public class CSVReader {
         return columns==null?null:columns.clone();
     }
 
-    public List<List<?>> getData() {
+    public List<List> getData() {
         return data==null?null:data.stream().toList();
     }
 
@@ -74,7 +74,7 @@ public class CSVReader {
         return String.class;  // else String
     }
 
-    private void addRowData(List<List<?>> data, String[] rowData, List<Class<?>> types) {
+    private void addRowData(List<List> data, String[] rowData, List<Class<?>> types) {
         for(int i=0; i<types.size(); i++) {
             if(i>=data.size()) {
                 if(types.get(i) == Integer.class) {
