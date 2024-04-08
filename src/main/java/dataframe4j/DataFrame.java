@@ -1,13 +1,16 @@
 package dataframe4j;
 
 
+import dataframe4j.column.Column;
+import dataframe4j.column.ColumnGenerator;
+
 import java.util.*;
 
 public class DataFrame implements IDataFrame {
 
     static final String VAL_NAN = "NaN";
 
-    private List<List> data;
+    private List<Column<?>> data;
     private List<Object> index;
     private List<String> columns;
     private List<Class<?>> types = new ArrayList<>();
@@ -34,7 +37,7 @@ public class DataFrame implements IDataFrame {
                     throw new RuntimeException("Il existe de différents types de données dans un même colonne !");
                 }
 
-                List list = new ArrayList<>(Arrays.stream(col_data).toList());
+                Column<?> list = ColumnGenerator.createColumn(col_data, type);//new Column(col_data, type);
                 rows = Math.max(list.size(), rows);
                 this.data.add(list);
                 this.types.add(type);
@@ -93,6 +96,9 @@ public class DataFrame implements IDataFrame {
 
     @Override
     public DataFrame selectRows(int[] index) {
+        if(index==null || index.length==0){
+            return null;
+        }
         DataFrame df = new DataFrame(null, columns.toArray(new String[]{}));
         for (int rowId : index) {
             for (int j = 0; j < getColumnSize(); j++) {
@@ -107,6 +113,9 @@ public class DataFrame implements IDataFrame {
 
     @Override
     public DataFrame selectColumns(String[] labels) {
+        if(labels==null || labels.length==0){
+            return null;
+        }
         DataFrame df = new DataFrame(null, labels);
         for (String label : labels) {
             int colId = columns.indexOf(label);
@@ -122,9 +131,8 @@ public class DataFrame implements IDataFrame {
     @Override
     public DataFrame selectRows(IndexFilter filter) {
         DataFrame df = new DataFrame(null, columns.toArray(new String[]{}));
-
         for(int i=0; i<getRowSize(); i++){
-            if(!filter.filter(i)){
+            if(filter!=null && !filter.filter(i)){
                 continue;
             }
             for(int j=0; j<getColumnSize(); j++) {
@@ -134,7 +142,6 @@ public class DataFrame implements IDataFrame {
                 df.addColumn(columns.get(j), data.get(j).get(i));
             }
         }
-
         return df;
     }
 
@@ -152,15 +159,15 @@ public class DataFrame implements IDataFrame {
                 // wrong type
                 return;
             }
+            if(data==null){
+                data = new ArrayList<>(columns.size());
+            }
+            if(index>=data.size()) {
+                data.add(new Column<>(item.getClass()));
+            }
+            ((Column)data.get(index)).getData().add(item);
+            rows = Math.max(data.get(index).size(), rows);
         }
-        if(data==null){
-            data = new ArrayList<>(columns.size());
-        }
-        if(index>=data.size()) {
-            data.add(new ArrayList<>());
-        }
-        data.get(index).add(item);
-        rows = Math.max(data.get(index).size(), rows);
     }
 
     public int getRowSize(){

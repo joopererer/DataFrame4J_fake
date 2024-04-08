@@ -1,5 +1,7 @@
 package dataframe4j;
 
+import dataframe4j.column.Column;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,7 +13,7 @@ public class CSVReader {
     static final String SEPARATEUR = ",";
     private final String csvFile;
     private String[] columns;
-    private List<List> data;
+    private List<Column<?>> data;
     private List<Class<?>> types;
 
     public CSVReader(String file) {
@@ -53,7 +55,7 @@ public class CSVReader {
         return columns==null?null:columns.clone();
     }
 
-    public List<List> getData() {
+    public List<Column<?>> getData() {
         return data==null?null:data.stream().toList();
     }
 
@@ -74,38 +76,38 @@ public class CSVReader {
         return String.class;  // else String
     }
 
-    private void addRowData(List<List> data, String[] rowData, List<Class<?>> types) {
+    private void addRowData(List<Column<?>> data, String[] rowData, List<Class<?>> types) {
         for(int i=0; i<types.size(); i++) {
             if(i>=data.size()) {
                 if(types.get(i) == Integer.class) {
-                    data.add(new ArrayList<Integer>());
+                    data.add(new Column<>(Integer.class));
                 }else
                 if(types.get(i) == Float.class) {
-                    data.add(new ArrayList<Float>());
+                    data.add(new Column<>(Float.class));
                 }else
                 if(types.get(i) == Boolean.class) {
-                    data.add(new ArrayList<Boolean>());
+                    data.add(new Column<>(Boolean.class));
                 }else
                 if(types.get(i) == String.class) {
-                    data.add(new ArrayList<String>());
+                    data.add(new Column<>(String.class));
                 }
             }
             if(i>=rowData.length || rowData[i]==null || rowData[i].isEmpty()){
-                data.get(i).add(null);
+                data.get(i).getData().add(null);
                 continue;
             }
             try {
                 if(types.get(i) == Integer.class) {
-                    ((List<Integer>) data.get(i)).add(Integer.valueOf(rowData[i]));
+                    ((Column<Integer>) data.get(i)).getData().add(Integer.valueOf(rowData[i]));
                 }else
                 if(types.get(i) == Float.class) {
-                    ((List<Float>)data.get(i)).add(Float.valueOf(rowData[i]));
+                    ((Column<Float>)data.get(i)).getData().add(Float.valueOf(rowData[i]));
                 }else
                 if(types.get(i) == Boolean.class) {
-                    ((List<Boolean>)data.get(i)).add(Boolean.valueOf(rowData[i]));
+                    ((Column<Boolean>)data.get(i)).getData().add(Boolean.valueOf(rowData[i]));
                 }else
                 if(types.get(i) == String.class) {
-                    ((List<String>)data.get(i)).add(rowData[i]);
+                    ((Column<String>)data.get(i)).getData().add(rowData[i]);
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
