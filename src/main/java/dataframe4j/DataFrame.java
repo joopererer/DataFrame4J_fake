@@ -20,7 +20,7 @@ public class DataFrame implements IDataFrame {
         this(data, null, columns);
     }
 
-    public DataFrame(Object[][] data, Object[] index, String[] columns) {
+    private DataFrame(Object[][] data, Object[] index, String[] columns) {
         if(data!=null) {
             this.data = new ArrayList<>(data.length);
             for(Object[] col_data : data) {
