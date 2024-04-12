@@ -1,0 +1,13 @@
+----- ver 0.0.2
+<je pense il faut rediscuiter un peu la semaine prochaine pour les taches suivantes>
+Fonctionnalité:    -- sera plus de travails
+1, selection
+2, statistique
+3, tests (Junit)
+
+Livraison continue :
+4, pouvoir déployer sur dépôt Github Packages
+5. ajouter Workflow/Action - pour publier automatiquement quand on release une version en branch master
+
+Badges/README:
+6. ...

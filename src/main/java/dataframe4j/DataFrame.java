@@ -1,14 +1,16 @@
 package dataframe4j;
 
 
+import dataframe4j.column.Column;
+import dataframe4j.column.ColumnGenerator;
+
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class DataFrame implements IDataFrame {
 
     static final String VAL_NAN = "NaN";
 
-    private List<List<?>> data;
+    private List<Column<?>> data;
     private List<Object> index;
     private List<String> columns;
     private List<Class<?>> types = new ArrayList<>();
@@ -18,7 +20,7 @@ public class DataFrame implements IDataFrame {
         this(data, null, columns);
     }
 
-    public DataFrame(Object[][] data, Object[] index, String[] columns) {
+    private DataFrame(Object[][] data, Object[] index, String[] columns) {
         if(data!=null) {
             this.data = new ArrayList<>(data.length);
             for(Object[] col_data : data) {
@@ -34,7 +36,8 @@ public class DataFrame implements IDataFrame {
                 if(type==null) {
                     throw new RuntimeException("Il existe de différents types de données dans un même colonne !");
                 }
-                List<?> list = Arrays.stream(col_data).toList();
+
+                Column<?> list = ColumnGenerator.createColumn(col_data, type);//new Column(col_data, type);
                 rows = Math.max(list.size(), rows);
                 this.data.add(list);
                 this.types.add(type);
@@ -89,6 +92,82 @@ public class DataFrame implements IDataFrame {
 
     public void printTail(int n) {
         print(getRowSize()-n, getRowSize());
+    }
+
+    @Override
+    public DataFrame selectRows(int[] index) {
+        if(index==null || index.length==0){
+            return null;
+        }
+        DataFrame df = new DataFrame(null, columns.toArray(new String[]{}));
+        for (int rowId : index) {
+            for (int j = 0; j < getColumnSize(); j++) {
+                if (rowId >= data.get(j).size()) {
+                    continue;
+                }
+                df.addColumn(columns.get(j), data.get(j).get(rowId));
+            }
+        }
+        return df;
+    }
+
+    @Override
+    public DataFrame selectColumns(String[] labels) {
+        if(labels==null || labels.length==0){
+            return null;
+        }
+        DataFrame df = new DataFrame(null, labels);
+        for (String label : labels) {
+            int colId = columns.indexOf(label);
+            if(colId!=-1){
+                for(int i=0; i<data.get(colId).size(); i++) {
+                    df.addColumn(label, data.get(colId).get(i));
+                }
+            }
+        }
+        return df;
+    }
+
+    @Override
+    public DataFrame selectRows(IndexFilter filter) {
+        DataFrame df = new DataFrame(null, columns.toArray(new String[]{}));
+        for(int i=0; i<getRowSize(); i++){
+            if(filter!=null && !filter.filter(i)){
+                continue;
+            }
+            for(int j=0; j<getColumnSize(); j++) {
+                if(i>=data.get(j).size()) {
+                    continue;
+                }
+                df.addColumn(columns.get(j), data.get(j).get(i));
+            }
+        }
+        return df;
+    }
+
+    private void addColumn(String label, Object item) {
+        int index = columns.indexOf(label);
+        if(index<0 || index>=columns.size()){
+            // label not found
+            return;
+        }
+        if(item!=null){
+            if(index>=types.size()){
+                types.add(item.getClass());
+            }
+            if(item.getClass()!=types.get(index)){
+                // wrong type
+                return;
+            }
+            if(data==null){
+                data = new ArrayList<>(columns.size());
+            }
+            if(index>=data.size()) {
+                data.add(new Column<>(item.getClass()));
+            }
+            ((Column)data.get(index)).getData().add(item);
+            rows = Math.max(data.get(index).size(), rows);
+        }
     }
 
     public int getRowSize(){
@@ -168,33 +247,5 @@ public class DataFrame implements IDataFrame {
         }
         return type;
     }
-
-//    private static List<?> createColumn(Object[] colData, Class<?> type) {
-//        if(type == Short.class) {
-//            return Arrays.stream(colData).map(obj -> (Short) obj).collect(Collectors.toList());
-//        }
-//        if(type == Integer.class) {
-//            return Arrays.stream(colData).map(obj -> (Integer) obj).collect(Collectors.toList());
-//        }
-//        if(type == Float.class) {
-//            return Arrays.stream(colData).map(obj -> (Float) obj).collect(Collectors.toList());
-//        }
-//        if(type == Double.class) {
-//            return Arrays.stream(colData).map(obj -> (Double) obj).collect(Collectors.toList());
-//        }
-//        if(type == Long.class) {
-//            return Arrays.stream(colData).map(obj -> (Long) obj).collect(Collectors.toList());
-//        }
-//        if(type == Boolean.class) {
-//            return Arrays.stream(colData).map(obj -> (Boolean) obj).collect(Collectors.toList());
-//        }
-//        if(type == Character.class) {
-//            return Arrays.stream(colData).map(obj -> (Character) obj).collect(Collectors.toList());
-//        }
-//        if(type == String.class) {
-//            return Arrays.stream(colData).map(obj -> (String) obj).collect(Collectors.toList());
-//        }
-//        return Arrays.stream(colData).toList();
-//    }
 
 }
