@@ -56,6 +56,13 @@
 <!--            <url>https://maven.pkg.github.com/joopererer/DataFrame4J_fake</url>-->
 <!--        </repository>-->
 <!--    </distributionManagement>-->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/octocat/hello-world</url>
+        </repository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -77,16 +84,16 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.sonatype.central</groupId>
-                <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.4.0</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <publishingServerId>ossrh</publishingServerId>
-                    <tokenAuth>true</tokenAuth>
-                </configuration>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.sonatype.central</groupId>-->
+<!--                <artifactId>central-publishing-maven-plugin</artifactId>-->
+<!--                <version>0.4.0</version>-->
+<!--                <extensions>true</extensions>-->
+<!--                <configuration>-->
+<!--                    <publishingServerId>ossrh</publishingServerId>-->
+<!--                    <tokenAuth>true</tokenAuth>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
             <!-- Javadoc plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
