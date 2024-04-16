@@ -22,11 +22,3 @@ jobs:
         run: |
           docker build -t joopererer/dataframe4j_fake:latest .
           docker push joopererer/dataframe4j_fake:latest
-
-      - name: Login to GitHub Package
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
-
-      - name: Tag and push Docker image to GitHub Package
-        run: |
-          docker tag joopererer/dataframe4j_fake:latest docker.pkg.github.com/joopererer/DataFrame4J_fake/dataframe4j_fake:latest
-          docker push docker.pkg.github.com/joopererer/DataFrame4J_fake/dataframe4j_fake:latest
