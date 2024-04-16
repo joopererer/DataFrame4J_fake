@@ -12,14 +12,50 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- dépôt pour le package -->
-    <distributionManagement>
+    <!-- 项目信息 -->
+    <name>DataFrame4J_fake</name>
+    <description>DataFrame4J_fake</description>
+    <url>https://github.com/joopererer/DataFrame4J_fake</url>
+
+    <!--  项目地址信息   -->
+    <scm>
+        <connection>scm:git:https://github.com/joopererer/DataFrame4J_fake</connection>
+        <url>https://github.com/joopererer/DataFrame4J_fake.git</url>
+        <developerConnection>scm:git:https://github.com/joopererer/DataFrame4J_fake</developerConnection>
+    </scm>
+
+    <!-- licenses 信息    -->
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <!--  开发者信息   -->
+    <developers>
+        <developer>
+            <name>James LI</name>
+            <email>joopererer@qq.com</email>
+        </developer>
+    </developers>
+
+    <!--  如果用到了 snapshot 版本的依赖则需要加上下面这个声明    -->
+    <repositories>
         <repository>
-            <id>ossrh</id>
-            <name>Central Repository OSSRH</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
-    </distributionManagement>
+    </repositories>
+
+    <!-- dépôt pour le package -->
+<!--    <distributionManagement>-->
+<!--        <repository>-->
+<!--            <id>github</id>-->
+<!--            <name>GitHub OWNER Apache Maven Packages</name>-->
+<!--            <url>https://maven.pkg.github.com/joopererer/DataFrame4J_fake</url>-->
+<!--        </repository>-->
+<!--    </distributionManagement>-->
 
     <dependencies>
         <dependency>
@@ -41,16 +77,71 @@
                     <target>17</target>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.sonatype.central</groupId>-->
-<!--                <artifactId>central-publishing-maven-plugin</artifactId>-->
-<!--                <version>0.4.0</version>-->
-<!--                <extensions>true</extensions>-->
-<!--                <configuration>-->
-<!--                    <publishingServerId>ossrh</publishingServerId>-->
-<!--                    <tokenAuth>true</tokenAuth>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.4.0</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <publishingServerId>ossrh</publishingServerId>
+                    <tokenAuth>true</tokenAuth>
+                </configuration>
+            </plugin>
+            <!-- Javadoc plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <doclint>none</doclint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Source plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- GPG plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <!-- Prevent `gpg` from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- pour exec:java -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
