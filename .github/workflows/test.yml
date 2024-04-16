@@ -17,6 +17,9 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '17'
+          server-id: ossrh
+          server-username: MAVEN_USERNAME
+          server-password: MAVEN_PASSWORD
 
       - name: Generate Javadoc
         run: mvn javadoc:javadoc
@@ -25,8 +28,10 @@ jobs:
         run: mvn source:jar
 
       - name: Deploy to Sonatype
-        run: mvn deploy --settings .github/settings.xml
+        run: mvn --batch-mode deploy
 
         env:
+          MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
           GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
