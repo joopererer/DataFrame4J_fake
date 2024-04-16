@@ -6,8 +6,6 @@ name: Maven Package
 on:
   release:
     types: [created]
-  push:
-    branches: [ "ver0.0.2" ]
 
 jobs:
   build:
@@ -32,6 +30,8 @@ jobs:
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Set up Java for publishing to GitHub Packages
         uses: actions/setup-java@v4
